@@ -1,0 +1,139 @@
+/* On mouse hover, lighten state color */
+path:hover {
+	fill-opacity: .7;
+}
+
+/* Style for Custom Tooltip */
+div.tooltip {   
+ 	position: absolute;           
+	text-align: center;           
+	width: 30px;                  
+	height: 15px;                 
+	padding: 2px;             
+	font: 12px sans-serif;        
+	background: white;   
+	border: 0px;      
+	border-radius: 8px;           
+	pointer-events: none;         
+}
+        
+/* Legend Font Style */
+body {
+	font: 11px sans-serif;
+}
+        
+/* Legend Position Style */
+
+
+
+/* Custom Styling */
+
+
+.svg_element{
+width:56%;display:inline-block;vertical-align:top;border-right:1px solid #ddd;
+}
+.svg_bar{width:39%;display:inline-block;vertical-align:top;}
+.title{font-size: 18px;color: #333;margin:0 0 10px 0;padding:10px;text-align:center;}
+.filter_criteria_bottom {
+    background-color: #FFF;
+    padding: 0;
+    margin-top: 0; 
+    margin-bottom: 15px;
+    border: 0px;
+}
+.filter_criteria {
+    margin: 10px 0 0 0;
+    border-top: 1px solid #e4e4e4;
+    background-color: #F0F0F0;
+    padding: 0 10px;
+}
+.info_box {
+    display: block;
+    min-height: 80px;
+    background: #fff;
+    width: 100%;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    border-radius: 2px;
+    margin-bottom: 7px;
+    padding: 0px;
+}
+.filter_criteria ul {
+    display: inline-block;
+    vertical-align: middle;
+}
+.info_box_content {
+    padding: 0px;
+    overflow: hidden;
+}
+
+.filter_criteria ul li select {
+    width: 113px;
+    border-radius: 2px;
+}
+
+.filter_criteria ul li select {
+    margin-top: 5px;
+    width: 125px;
+}
+
+.filter_criteria ul li label {
+    display: block;
+    color: #333;
+    font-size: 15px;
+    font-weight: 500;
+    text-align: left;
+}
+.filter_criteria ul li label {
+    margin-bottom: 0px;
+}
+
+.filter_criteria ul li {
+    padding: 7px 0;
+}
+
+.filter_criteria ul li {
+    display: inline-block;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.428571429;
+    color: #555555;
+    vertical-align: middle;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+    transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+/*horizontal bar chart */
+
+
+.y.axis path,
+.y.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+
+/* .y_axis line {
+    fill: none;
+    shape-rendering: crispEdges;
+    stroke: #000;
+} */
+
+
+
+
+.x.axis path {
+  display: none;
+}

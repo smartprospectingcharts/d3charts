@@ -140,13 +140,33 @@ var zoom = d3.behavior.zoom()
 
 var g = svg.append("g")
     .call(zoom);
-
+var tip = d3.tip()
+            .attr('class', 'd3-tip')
+                .style({ 'line-height': 1.5, 'padding': '8px', 'font': '10px sans-serif', 'opacity': 1,'background': 'rgba(0, 0, 0, 0.8)','color': '#fff',
+                     'border-radius': '1px', 'border': 'solid 1px black', 'position': 'absolute','text-align': 'center'
+               })
+            .offset([-10, 5])
+            .direction('e')
+            .html(function (d) {
+                //return "<strong>" + Math.round(((d.y1) - (d.y0)),2) + "</strong>";
+                return "<strong>" + d.place + "</strong><br/><br/><strong> Percentage : " + Math.round((d.percentage),2) + "%</strong>";
+            });
+    svg.call(tip);
 // Append Div for tooltip to SVG
 //var div = d3.select("body")
 var div = d3.select("div.svg_element")
             .append("div")   
             .attr("class", "tooltip")               
             .style("opacity", 0);
+var grad = svg.append("defs").append("linearGradient").attr("id", "grad")
+    .attr("x1", "100%").attr("x2", "0%").attr("y1", "0%").attr("y2", "0%");
+grad.append("stop").attr("offset", "50%").style("stop-color", "rgb(255, 146, 6)")
+grad.append("stop").attr("offset", "50%").style("stop-color", "transparent")
+
+var grad_1= svg.append("defs").append("linearGradient").attr("id", "grad_1")
+    .attr("x1", "0%").attr("x2", "100%").attr("y1", "0%").attr("y2", "0%");
+grad_1.append("stop").attr("offset", "50%").style("stop-color", "rgb(85, 85, 85)")
+grad_1.append("stop").attr("offset", "50%").style("stop-color", "transparent")
 //var selected_product = 'CRM';
 var cities_data_list;
 $.ajax({
@@ -195,10 +215,11 @@ $.ajax({
                         cities_data_list = cities_data;
                         var cities_each = cities_data["data"];
                         var selected_product = 'All';
-                        svg.selectAll("circle")
+                        svg.selectAll("g.circle")
                             .data(cities_each)
                             .enter()
                             .append("circle")
+							.attr("class","base_circle")
                             .attr("cx", function(d) {
                                 if((d.product_type == 'All') && (d.cloud == 'All') && (d.revenue == 'All')){
                                     return projection([d.lon, d.lat])[0];
@@ -211,37 +232,21 @@ $.ajax({
                             })
                             .attr("r", function(d) {
                                 if((d.product_type == 'All') && (d.cloud == 'All') && (d.revenue == 'All')){
-                                return Math.sqrt(d.years) * 4;
+                                return Math.sqrt(d.years) * 3;
                                 }
                             })
-                                .style("fill", "rgb(217,91,67)")    
+                                //.style("fill", "rgb(217,91,67)")    
+								.attr("fill", "url(#grad_1)")
                                 .style("opacity", 0.85)    
+								.on('mouseover', tip.show)
+            .on('mouseout', tip.hide);
 
-                            // Modification of custom tooltip code provided by Malcolm Maclean, "D3 Tips and Tricks" 
-                            // http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html
-                            .on("mouseover", function(d) {      
-                                div.transition()        
-                                   .duration(200)      
-                                   .style("opacity", .9);      
-                                   //div.text(d.years)
-                                   div.text(Math.round(d.percentage,1)+"%")
-                                   .style("left", (d3.event.pageX) + "px")     
-                                   .style("top", (d3.event.pageY - 28) + "px");    
-                            })   
 
-                            // fade out tooltip on mouse out               
-                            .on("mouseout", function(d) {       
-                                div.transition()        
-                                   .duration(500)      
-                                   .style("opacity", 0);   
-                            });
-							
-							
-							
-                        svg.selectAll("circle")
+                        svg.selectAll("g.circle")
                             .data(cities_each)
                             .enter()
                             .append("circle")
+						.attr("class","base_circle_2")
                             .attr("cx", function(d) {
                                 if((d.product_type == 'All') && (d.cloud == 'All') && (d.revenue == 'All')){
                                     return projection([d.lon, d.lat])[0];
@@ -254,30 +259,16 @@ $.ajax({
                             })
                             .attr("r", function(d) {
                                 if((d.product_type == 'All') && (d.cloud == 'All') && (d.revenue == 'All')){
-                                return Math.sqrt(d.years) * 8;
+                                return Math.sqrt(d.years) * 6;
                                 }
                             })
-                                .style("fill", "rgb(33, 150, 243)")    
+                                //.style("fill", "rgb(33, 150, 243)")
+	                          .attr("fill", "url(#grad)") 
                                 .style("opacity", 0.85)    
+								.on('mouseover', tip.show)
+            .on('mouseout', tip.hide);
 
-                            // Modification of custom tooltip code provided by Malcolm Maclean, "D3 Tips and Tricks" 
-                            // http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html
-                            .on("mouseover", function(d) {      
-                                div.transition()        
-                                   .duration(200)      
-                                   .style("opacity", .9);      
-                                   //div.text(d.years)
-                                   div.text(Math.round(d.percentage,1)+"%")
-                                   .style("left", (d3.event.pageX) + "px")     
-                                   .style("top", (d3.event.pageY - 28) + "px");    
-                            })   
-
-                            // fade out tooltip on mouse out               
-                            .on("mouseout", function(d) {       
-                                div.transition()        
-                                   .duration(500)      
-                                   .style("opacity", 0);   
-                            });
+                           
                     }
             });  
                     
@@ -297,7 +288,8 @@ $.ajax({
                 legend.append("rect")
                       .attr("width", 18)
                       .attr("height", 18)
-                      .style("fill", "rgb(217,91,67)");
+                      //.style("fill", "rgb(217,91,67)");
+					   .style("fill", "rgb(85, 85, 85)");
 
                 legend.append("text")
                       .data(legendText)
@@ -326,12 +318,15 @@ function alter_count_data(input_value){
 			$('#producttype_top').val('All');
 		}
 		var cities_each = cities_data_list["data"];
-		var circle = svg.selectAll("circle");
+       var circle = svg.selectAll(".base_circle_2");
 		circle.remove();
-		svg.selectAll("circle")
+		var circle = d3.selectAll(".base_circle");
+		circle.remove();
+		svg.selectAll("g.circle")
 			.data(cities_each)
 			.enter()
 			.append("circle")
+			.attr("class","base_circle")
 			.attr("cx", function(d) {
 				//if((selected_product == 'All' || selected_product == d.product_type) && (selected_cloud == 'All' || selected_cloud == d.cloud) && (selected_revenue == 'All' || selected_revenue == d.revenue)){
 				if((selected_product == d.product_type) && (selected_cloud == d.cloud) && (selected_revenue == d.revenue)){
@@ -353,27 +348,44 @@ function alter_count_data(input_value){
 				return Math.sqrt(d.years) * 4;
 				}
 			})
-				.style("fill", "rgb(217,91,67)")    
-				.style("opacity", 0.85)    
+				//.style("fill", "rgb(217,91,67)")    
+				//.style("opacity", 0.85)  
+             .attr("fill", "url(#grad_1)") 				
+				.style("opacity", 0.85)
+				.on('mouseover', tip.show)
+            .on('mouseout', tip.hide);				
 
-			// Modification of custom tooltip code provided by Malcolm Maclean, "D3 Tips and Tricks" 
-			// http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html
-			.on("mouseover", function(d) {      
-				div.transition()        
-				   .duration(200)      
-				   .style("opacity", .9);      
-				   //div.text(d.years)
-				   div.text(Math.round(d.percentage,1)+"%")
-				   .style("left", (d3.event.pageX) + "px")     
-				   .style("top", (d3.event.pageY - 28) + "px");    
-			})   
-
-			// fade out tooltip on mouse out               
-			.on("mouseout", function(d) {       
-				div.transition()        
-				   .duration(500)      
-				   .style("opacity", 0);   
-			});
+		   svg.selectAll("g.circle")
+                            .data(cities_each)
+                            .enter()
+                            .append("circle")
+							.attr("class","base_circle_2")
+                            .attr("cx", function(d) {
+				//if((selected_product == 'All' || selected_product == d.product_type) && (selected_cloud == 'All' || selected_cloud == d.cloud) && (selected_revenue == 'All' || selected_revenue == d.revenue)){
+				if((selected_product == d.product_type) && (selected_cloud == d.cloud) && (selected_revenue == d.revenue)){
+					record_count += 1;
+					return projection([d.lon, d.lat])[0];
+				}
+			})
+			.attr("cy", function(d) {
+				//if((selected_product == 'All' || selected_product == d.product_type) && (selected_cloud == 'All' || selected_cloud == d.cloud) && (selected_revenue == 'All' || selected_revenue == d.revenue)){
+				if((selected_product == d.product_type) && (selected_cloud == d.cloud) && (selected_revenue == d.revenue)){
+					record_count += 1;
+					return projection([d.lon, d.lat])[1];
+				}
+			})
+			.attr("r", function(d) {
+				//if((selected_product == 'All' || selected_product == d.product_type) && (selected_cloud == 'All' || selected_cloud == d.cloud) && (selected_revenue == 'All' || selected_revenue == d.revenue)){
+				if((selected_product == d.product_type) && (selected_cloud == d.cloud) && (selected_revenue == d.revenue)){
+					record_count += 1;
+				return Math.sqrt(d.years) * 6;
+				}
+			})
+				//.style("fill", "rgb(217,91,67)") 
+				.attr("fill", "url(#grad)") 				
+				.style("opacity", 0.85)
+				.on('mouseover', tip.show)
+            .on('mouseout', tip.hide);
 		if(record_count == 0){
 		alert("No Data available, Please select another filter criteria");
 		}

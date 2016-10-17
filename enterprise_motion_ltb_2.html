@@ -214,6 +214,7 @@ $.ajax({
                     url: "http://textsum.cloudapp.net:5005/citieslived",
                     dataType: "jsonp",
                     success: function(cities_data) {
+					
                         cities_data_list = cities_data;
                         var cities_each = cities_data["data"];
                         var selected_product = 'All';
@@ -221,8 +222,9 @@ $.ajax({
                             .data(cities_each)
                             .enter()
                             .append("circle")
-							.attr("class","base_circle")
+                           .attr("class","base_circle")
                             .attr("cx", function(d) {
+							
                                 if((d.product_type == 'All') && (d.cloud == 'All') && (d.revenue == 'All')){
                                     return projection([d.lon, d.lat])[0];
                                 }
@@ -273,7 +275,7 @@ $.ajax({
                            
                     }
             });  
-                    
+              
             // Modified Legend Code from Mike Bostock: http://bl.ocks.org/mbostock/3888852
             //var legend = d3.select("body").append("svg")
             var legend = d3.select("div.svg_element").append("svg")
@@ -319,8 +321,9 @@ function alter_count_data(input_value){
 			$('#cloud_top').val('All');
 			$('#producttype_top').val('All');
 		}
+		var city_name_list=[]
 		var cities_each = cities_data_list["data"];
-       var circle = svg.selectAll(".base_circle_2");
+      var circle = svg.selectAll(".base_circle_2");
 		circle.remove();
 		var circle = d3.selectAll(".base_circle");
 		circle.remove();
@@ -333,6 +336,7 @@ function alter_count_data(input_value){
 				//if((selected_product == 'All' || selected_product == d.product_type) && (selected_cloud == 'All' || selected_cloud == d.cloud) && (selected_revenue == 'All' || selected_revenue == d.revenue)){
 				if((selected_product == d.product_type) && (selected_cloud == d.cloud) && (selected_revenue == d.revenue)){
 					record_count += 1;
+                    city_name_list.push(d.place)
 					return projection([d.lon, d.lat])[0];
 				}
 			})
@@ -384,10 +388,12 @@ function alter_count_data(input_value){
 				}
 			})
 				//.style("fill", "rgb(217,91,67)") 
-				.attr("fill", "url(#grad)") 				
+				.attr("fill", "url(#grad)")
+
 				.style("opacity", 0.6)
 				.on('mouseover', tip.show)
             .on('mouseout', tip.hide);
+		console.log(city_name_list);
 		if(record_count == 0){
 		alert("No Data available, Please select another filter criteria");
 		}
@@ -418,7 +424,7 @@ var svg_bar = d3.select(".svg_bar").append("svg")
 	//.attr("transform", "translate( 200,-10)")
 	
 var y = d3.scale.ordinal()
-    .rangeRoundBands([height, 0], 0.1);
+    .rangeRoundBands([height, 0], 0.5);
 
 var x = d3.scale.linear()
     .rangeRound([0, width_horz_bar]);
@@ -492,7 +498,7 @@ var tip = d3.tip()
   data_val.forEach(function(d) {
     var y0 = 0;
     d.ages = color.domain().map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
-	console.log(d);
+	//console.log(d);
     d.total = d.ages[d.ages.length - 1].y1;
   });
   
@@ -521,9 +527,9 @@ var yAxis = d3.svg.axis()
       .enter().append("rect")
      //.attr("height", y.rangeBand())
 	.attr("height",function(d) {
-	if (y.rangeBand() <10)
+	if (y.rangeBand() <8)
 	{
-	return 10;
+	return 8;
 	}
 	else
 	{
@@ -546,6 +552,7 @@ var yAxis = d3.svg.axis()
         .duration(1500)
       .attr("width", function(d) {  if (x(d.y1) - x(d.y0)) {return x(d.y1) - x(d.y0); }})
       .style("fill", function(d) { return color(d.name); })
+
 	    //.on('mouseover', tip.show)
             //.on('mouseout', tip.hide);
        
@@ -581,7 +588,7 @@ var yAxis = d3.svg.axis()
         .attr("class", "legend")
              .attr('transform', function(d, i) {                   
            var horz = 100*i-100;                      
-          var vert = height+40;    
+          var vert = height+10;    
            if (horz >= width) {
               horz = 200 * (i -4)+50;
               //vert = height-30;
@@ -594,7 +601,8 @@ var yAxis = d3.svg.axis()
     legend.append("rect")
          .attr("width", legendRectSize)
         .attr("height", legendRectSize)
-        .style("fill", color);
+        .style("fill", color)
+
 
     legend.append("text")
         .attr("x",function(d) {
@@ -616,6 +624,7 @@ var yAxis = d3.svg.axis()
         .attr("dy", ".35em")
         .style({ "text-anchor": "end", 'font-family': 'sans-serif', 'font-size': '11px' })
         .text(function (d) {
+		//console.log(data);
             return d;
         });
 
@@ -710,7 +719,7 @@ input_data_list=[]
 		}
 		//console.log(input_data_list);
 		//console.log(Industies_name.length);
-		horizontal_bar_chart(input_data_list,(Industies_name.length*75)/2);
+		horizontal_bar_chart(input_data_list,(Industies_name.length*30)/2);
         //change(input_data_list,Industies_name);
 		
 		
@@ -770,7 +779,7 @@ input_data_list=[]
 				update_dict['counts'] = ''
 			}
 			}
-			horizontal_bar_chart(input_data_list,Industies_name.length*75/2);
+			horizontal_bar_chart(input_data_list,Industies_name.length*30/2);
 			}
 		}
     });

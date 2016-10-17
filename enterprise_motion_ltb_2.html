@@ -43,7 +43,7 @@
 </head>
 <body>
 <!-- <h2>Total number of companies by state</h2> -->
-<div class="filter_criteria  filter_criteria_bottom info_box" >
+<div class="filter_criteria" >
 	<ul class="info_box_content">
 		<li>
 			<label>Product Type</label>
@@ -83,10 +83,10 @@
 	</ul>
 </div>
 <div class="svg_element">
-	<h1 class="title">Percentage of Companies by US Demography</h1>
+	<!-- <h1 class="title">Percentage of Companies by US Demography</h1> -->
 </div>
 <div class="svg_bar">
-	<h1 class="title">Likely to buy range across various Industries</h1>
+	<!-- <h1 class="title">Likely to buy range across various Industries</h1> -->
 </div>
 <script type="text/javascript">
 
@@ -103,14 +103,13 @@ http://bl.ocks.org/mbostock/3888852  */
 
         
 //Width and height of map
-var width = 750;
+var width = 1000;
 var height = 500;
 
 // D3 Projection
-var projection = d3.geo.albersUsa()
+var projection = d3.geo.albersUsa()                   
                    //.translate([width/2, height/2])    // translate to center of screen
-                   .translate([width/2, height/2])    // translate to center of screen
-                   .scale([1000]);          // scale things down so see entire US
+                   //.scale([1000]);          // scale things down so see entire US
         
 // Define path generator
 var path = d3.geo.path()               // path generator that will convert GeoJSON to SVG paths
@@ -126,9 +125,11 @@ var legendText = ["Percentage of companies"];
 //Create SVG element and append map to the SVG
 //var svg = d3.select("body")
 var svg = d3.select("div.svg_element")
-            .append("svg")
-            .attr("width", width)
-            .attr("height", height);
+            .append("svg").attr('id', 'mapcontainer')	
+            .attr("viewBox", "0 0 750 450")
+			
+			//.attr("width", width)
+            //.attr("height", height);
 
 			
 			
@@ -142,11 +143,11 @@ var g = svg.append("g")
     .call(zoom);
 var tip = d3.tip()
             .attr('class', 'd3-tip')
-                .style({ 'line-height': 1.5, 'padding': '8px', 'font': '10px sans-serif', 'opacity': 1,'background': 'rgba(0, 0, 0, 0.8)','color': '#fff',
+                .style({ 'line-height': 1.5, 'padding': '5px', 'font': '10px sans-serif', 'opacity': 1,'background': 'rgba(0, 0, 0, 0.8)','color': '#fff',
                      'border-radius': '1px', 'border': 'solid 1px black', 'position': 'absolute','text-align': 'center'
                })
             .offset([-10, 5])
-            .direction('e')
+            .direction('w')
             .html(function (d) {
                 //return "<strong>" + Math.round(((d.y1) - (d.y0)),2) + "</strong>";
                 return "<strong>" + d.place + "</strong><br/><br/><strong> Percentage : " + Math.round((d.percentage),2) + "%</strong>";
@@ -155,34 +156,35 @@ var tip = d3.tip()
 // Append Div for tooltip to SVG
 //var div = d3.select("body")
 var div = d3.select("div.svg_element")
-            .append("div")   
+            .append("div")
             .attr("class", "tooltip")               
             .style("opacity", 0);
 var grad = svg.append("defs").append("linearGradient").attr("id", "grad")
     .attr("x1", "100%").attr("x2", "0%").attr("y1", "0%").attr("y2", "0%");
-grad.append("stop").attr("offset", "50%").style("stop-color", "rgb(255, 146, 6)")
+grad.append("stop").attr("offset", "50%").style("stop-color", "#00acc1")
 grad.append("stop").attr("offset", "50%").style("stop-color", "transparent")
 
 var grad_1= svg.append("defs").append("linearGradient").attr("id", "grad_1")
     .attr("x1", "0%").attr("x2", "100%").attr("y1", "0%").attr("y2", "0%");
-grad_1.append("stop").attr("offset", "50%").style("stop-color", "rgb(85, 85, 85)")
+grad_1.append("stop").attr("offset", "50%").style("stop-color", "#795548")
 grad_1.append("stop").attr("offset", "50%").style("stop-color", "transparent")
 //var selected_product = 'CRM';
 var cities_data_list;
+var mapgroup = svg.append("g").attr('id', 'mapgroup');
 $.ajax({
         type: "GET",
         //url: "http://127.0.0.1:5005/us_states",
         url: "http://textsum.cloudapp.net:5005/us_states",
         //url: "http://devjob2.fiindlabs.com:5005/us_states",
-        dataType: "jsonp",
+        dataType: "jsonp",		
         success: function(json_data) {
             json = json_data["data"][0];
 			us_states_list = json;
             // Loop through each state data value in the .csv file
             
-                    
+				
             // Bind the data to the SVG and create one path per GeoJSON feature
-            svg.selectAll("path")
+            mapgroup.selectAll("path")
                 .data(json.features)
                 .enter()
                 .append("path")
@@ -199,7 +201,7 @@ $.ajax({
                 return color(value);
                 } else {
                 //If value is undefined…
-                return "rgb(213,222,217)";
+                return "rgb(225,225,225)";
                 }
             });
                      
@@ -237,7 +239,7 @@ $.ajax({
                             })
                                 //.style("fill", "rgb(217,91,67)")    
 								.attr("fill", "url(#grad_1)")
-                                .style("opacity", 0.85)    
+                                .style("opacity", 0.6)    
 								.on('mouseover', tip.show)
             .on('mouseout', tip.hide);
 
@@ -264,7 +266,7 @@ $.ajax({
                             })
                                 //.style("fill", "rgb(33, 150, 243)")
 	                          .attr("fill", "url(#grad)") 
-                                .style("opacity", 0.85)    
+                                .style("opacity", 0.6)    
 								.on('mouseover', tip.show)
             .on('mouseout', tip.hide);
 
@@ -349,9 +351,9 @@ function alter_count_data(input_value){
 				}
 			})
 				//.style("fill", "rgb(217,91,67)")    
-				//.style("opacity", 0.85)  
+				//.style("opacity", 0.6)  
              .attr("fill", "url(#grad_1)") 				
-				.style("opacity", 0.85)
+				.style("opacity", 0.6)
 				.on('mouseover', tip.show)
             .on('mouseout', tip.hide);				
 
@@ -383,7 +385,7 @@ function alter_count_data(input_value){
 			})
 				//.style("fill", "rgb(217,91,67)") 
 				.attr("fill", "url(#grad)") 				
-				.style("opacity", 0.85)
+				.style("opacity", 0.6)
 				.on('mouseover', tip.show)
             .on('mouseout', tip.hide);
 		if(record_count == 0){
@@ -396,26 +398,27 @@ function alter_count_data(input_value){
  function horizontal_bar_chart(data,height)
 {
 
-console.log(height+"       height");
+console.log(height+"height");
 if(height>800)
 {
     height=575
 } 
- var margin_horz_bar = {top: 20, right:100, bottom: 200, left: 200},
-    width_horz_bar = 700 - margin_horz_bar.left - margin_horz_bar.right,
+ var margin_horz_bar = {top: 0, right:0, bottom: 0, left: 150},
+    //width_horz_bar = 400 - margin_horz_bar.left - margin_horz_bar.right,
+	width_horz_bar = 350,
     height_horz_bar = height - margin_horz_bar.top - margin_horz_bar.bottom;
 
 var svg_bar = d3.select(".svg_bar").append("svg")
     //.attr("width", width_horz_bar + margin_horz_bar.left + margin_horz_bar.right)
-    .attr("width", 580)
-    .attr("height", height_horz_bar + margin_horz_bar.top + margin_horz_bar.bottom+100)
+    //.attr("width", 580)
+    //.attr("height", height_horz_bar + margin_horz_bar.top + margin_horz_bar.bottom+100)
     //.attr("height", height + margin_horz_bar.top + margin_horz_bar.bottom)
   .append("g")
     .attr("transform", "translate(" + margin_horz_bar.left + "," + margin_horz_bar.top + ")");
 	//.attr("transform", "translate( 200,-10)")
 	
 var y = d3.scale.ordinal()
-    .rangeRoundBands([height, 0], .1);
+    .rangeRoundBands([height, 0], 0.1);
 
 var x = d3.scale.linear()
     .rangeRound([0, width_horz_bar]);

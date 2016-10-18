@@ -214,7 +214,6 @@ $.ajax({
                     url: "http://textsum.cloudapp.net:5005/citieslived",
                     dataType: "jsonp",
                     success: function(cities_data) {
-					
                         cities_data_list = cities_data;
                         var cities_each = cities_data["data"];
                         var selected_product = 'All';
@@ -222,9 +221,8 @@ $.ajax({
                             .data(cities_each)
                             .enter()
                             .append("circle")
-                           .attr("class","base_circle")
+							.attr("class","base_circle")
                             .attr("cx", function(d) {
-							
                                 if((d.product_type == 'All') && (d.cloud == 'All') && (d.revenue == 'All')){
                                     return projection([d.lon, d.lat])[0];
                                 }
@@ -234,6 +232,9 @@ $.ajax({
                                     return projection([d.lon, d.lat])[1];
                                 }
                             })
+							.attr("r", 0)   
+	 .transition()
+        .duration(750)
                             .attr("r", function(d) {
                                 if((d.product_type == 'All') && (d.cloud == 'All') && (d.revenue == 'All')){
                                 return Math.sqrt(d.years) * 3;
@@ -242,8 +243,8 @@ $.ajax({
                                 //.style("fill", "rgb(217,91,67)")    
 								.attr("fill", "url(#grad_1)")
                                 .style("opacity", 0.6)    
-								.on('mouseover', tip.show)
-            .on('mouseout', tip.hide);
+								//.on('mouseover', tip.show)
+            //.on('mouseout', tip.hide);
 
 
                         svg.selectAll("g.circle")
@@ -261,6 +262,9 @@ $.ajax({
                                     return projection([d.lon, d.lat])[1];
                                 }
                             })
+							.attr("r", 0)   
+	 .transition()
+        .duration(750)
                             .attr("r", function(d) {
                                 if((d.product_type == 'All') && (d.cloud == 'All') && (d.revenue == 'All')){
                                 return Math.sqrt(d.years) * 6;
@@ -269,13 +273,14 @@ $.ajax({
                                 //.style("fill", "rgb(33, 150, 243)")
 	                          .attr("fill", "url(#grad)") 
                                 .style("opacity", 0.6)    
-								.on('mouseover', tip.show)
-            .on('mouseout', tip.hide);
+								//.on('mouseover', tip.show)
+            //.on('mouseout', tip.hide);
 
-                           
+                          svg.selectAll("circle").on('mouseover', tip.show)
+            .on('mouseout', tip.hide); 
                     }
             });  
-              
+                    
             // Modified Legend Code from Mike Bostock: http://bl.ocks.org/mbostock/3888852
             //var legend = d3.select("body").append("svg")
             var legend = d3.select("div.svg_element").append("svg")
@@ -305,6 +310,7 @@ $.ajax({
 }
 );
 
+
 function alter_count_data(input_value){
 		var record_count = 0;
 		alter_count_data_bar($(input_value).text());
@@ -321,7 +327,6 @@ function alter_count_data(input_value){
 			$('#cloud_top').val('All');
 			$('#producttype_top').val('All');
 		}
-		var city_name_list=[]
 		var cities_each = cities_data_list["data"];
       var circle = svg.selectAll(".base_circle_2");
 		circle.remove();
@@ -336,7 +341,6 @@ function alter_count_data(input_value){
 				//if((selected_product == 'All' || selected_product == d.product_type) && (selected_cloud == 'All' || selected_cloud == d.cloud) && (selected_revenue == 'All' || selected_revenue == d.revenue)){
 				if((selected_product == d.product_type) && (selected_cloud == d.cloud) && (selected_revenue == d.revenue)){
 					record_count += 1;
-                    city_name_list.push(d.place)
 					return projection([d.lon, d.lat])[0];
 				}
 			})
@@ -347,6 +351,9 @@ function alter_count_data(input_value){
 					return projection([d.lon, d.lat])[1];
 				}
 			})
+				 .attr("r", 0)   
+	 .transition()
+        .duration(750)
 			.attr("r", function(d) {
 				//if((selected_product == 'All' || selected_product == d.product_type) && (selected_cloud == 'All' || selected_cloud == d.cloud) && (selected_revenue == 'All' || selected_revenue == d.revenue)){
 				if((selected_product == d.product_type) && (selected_cloud == d.cloud) && (selected_revenue == d.revenue)){
@@ -354,13 +361,11 @@ function alter_count_data(input_value){
 				return Math.sqrt(d.years) * 4;
 				}
 			})
-				//.style("fill", "rgb(217,91,67)")    
-				//.style("opacity", 0.6)  
              .attr("fill", "url(#grad_1)") 				
 				.style("opacity", 0.6)
-				.on('mouseover', tip.show)
-            .on('mouseout', tip.hide);				
 
+				
+ 
 		   svg.selectAll("g.circle")
                             .data(cities_each)
                             .enter()
@@ -380,6 +385,9 @@ function alter_count_data(input_value){
 					return projection([d.lon, d.lat])[1];
 				}
 			})
+				 .attr("r", 0)   
+	 .transition()
+        .duration(750)
 			.attr("r", function(d) {
 				//if((selected_product == 'All' || selected_product == d.product_type) && (selected_cloud == 'All' || selected_cloud == d.cloud) && (selected_revenue == 'All' || selected_revenue == d.revenue)){
 				if((selected_product == d.product_type) && (selected_cloud == d.cloud) && (selected_revenue == d.revenue)){
@@ -389,11 +397,9 @@ function alter_count_data(input_value){
 			})
 				//.style("fill", "rgb(217,91,67)") 
 				.attr("fill", "url(#grad)")
-
 				.style("opacity", 0.6)
-				.on('mouseover', tip.show)
+				 svg.selectAll("circle").on('mouseover', tip.show)
             .on('mouseout', tip.hide);
-		console.log(city_name_list);
 		if(record_count == 0){
 		alert("No Data available, Please select another filter criteria");
 		}
@@ -498,7 +504,7 @@ var tip = d3.tip()
   data_val.forEach(function(d) {
     var y0 = 0;
     d.ages = color.domain().map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
-	//console.log(d);
+	console.log(d);
     d.total = d.ages[d.ages.length - 1].y1;
   });
   
@@ -583,7 +589,8 @@ var yAxis = d3.svg.axis()
     var legendSpacing = 4; 
     var legend = svg_bar.selectAll(".legend")
         //.data(color.domain().slice().reverse())
-        .data(['low','mid','high_mid','high'])
+       // .data(['low','mid','high_mid','high'])
+	   .data(['high','high_mid','mid','low'])
         .enter().append("g")
         .attr("class", "legend")
              .attr('transform', function(d, i) {                   
@@ -624,7 +631,7 @@ var yAxis = d3.svg.axis()
         .attr("dy", ".35em")
         .style({ "text-anchor": "end", 'font-family': 'sans-serif', 'font-size': '11px' })
         .text(function (d) {
-		//console.log(data);
+		console.log(data);
             return d;
         });
 
